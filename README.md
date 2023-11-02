@@ -47,9 +47,12 @@ Double-click on a geom and hold `Ctrl` to apply forces (using right mouse button
 
 ![ezgif-2-6758c40cdf](https://user-images.githubusercontent.com/16384313/161459985-a47e74dc-92c9-4a0b-99fc-92d1b5b04163.gif)
 
-
 Press `ESC` to quit.  
 Other key bindings are shown in the overlay menu (Press `H` or hold `Alt`).
+
+Also, this version we add the plot show on render windows as the effect shown below:
+
+![](https://cdn.staticaly.com/gh/JackTony123/picx-images-hosting@master/20231101/new_function.6v6i5f07f700.webp)
 
 
 
