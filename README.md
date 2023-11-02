@@ -50,9 +50,9 @@ Double-click on a geom and hold `Ctrl` to apply forces (using right mouse button
 Press `ESC` to quit.  
 Other key bindings are shown in the overlay menu (Press `H` or hold `Alt`).
 
-Also, this version we add the plot show on render windows as the effect shown below:
+Also, this version we add the plot show on bottom-right side of the render windows as shown below:
 
-![](https://cdn.staticaly.com/gh/JackTony123/picx-images-hosting@master/20231101/new_function.6v6i5f07f700.webp)
+![](https://cdn.statically.io/gh/JackTony123/picx-images-hosting@master/new_function.7ium0q6318s0.webp)
 
 
 
