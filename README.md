@@ -9,13 +9,15 @@ Some pointers on migration are available [here](https://mujoco.readthedocs.io/en
 
 # Install
 ```sh
-$ git clone https://github.com/gaolongsen/mujoco-python-viewer.git
-$ cd mujoco-python-viewer
-$ pip install -e .
+git clone https://github.com/gaolongsen/mujoco-python-viewer.git
 ```
-Or, install via Pip.
+
 ```sh
-$ pip install mujoco-python-viewer
+cd mujoco-python-viewer
+```
+
+```sh
+pip install -e .
 ```
 
 # Usage
