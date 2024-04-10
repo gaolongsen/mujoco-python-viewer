@@ -45,16 +45,13 @@ viewer.close()
 ```
 
 The render should pop up and the simulation should be running.  
-Double-click on a geom and hold `Ctrl` to apply forces (using right mouse button) and torques (using left mouse button).
+Double-click on a geom and hold `Ctrl` to apply forces (using right mouse button) and torques (using left mouse button). This version we add the plot show on bottom-right side of the render windows as shown below:
 
-![ezgif-2-6758c40cdf](https://user-images.githubusercontent.com/16384313/161459985-a47e74dc-92c9-4a0b-99fc-92d1b5b04163.gif)
+![ezgif-2-6758c40cdf](https://github.com/JackTony123/picx-images-hosting/raw/master/exp1.7w6lrjlcu0.gif)
 
-Press `ESC` to quit.  
-Other key bindings are shown in the overlay menu (Press `H` or hold `Alt`).
 
-Also, this version we add the plot show on bottom-right side of the render windows as shown below:
 
-![](https://cdn.statically.io/gh/JackTony123/picx-images-hosting@master/new_function.7ium0q6318s0.webp)
+![](https://github.com/JackTony123/picx-images-hosting/raw/master/exp2.6pnaiy0eby.gif)
 
 
 
