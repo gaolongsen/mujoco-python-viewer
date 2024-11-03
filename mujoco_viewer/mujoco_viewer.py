@@ -4,6 +4,7 @@ import numpy as np
 import time
 import pathlib
 import yaml
+import threading
 from .callbacks import Callbacks  # Ensure this is correctly imported
 
 MUJOCO_VERSION = tuple(map(int, mujoco.__version__.split('.')))
@@ -197,6 +198,9 @@ class MujocoViewer(Callbacks):
         self._overlay = {}
         self._markers = []
 
+        # Initialize threading lock for GUI operations
+        self._gui_lock = threading.Lock()
+
     # --------- Plot Management Methods --------- #
 
     def set_grid_divisions(self, x_div: int, y_div: int, x_axis_time: float = 0.0, fig_idx=0, override=False):
@@ -289,18 +293,18 @@ class MujocoViewer(Callbacks):
                 for i, name in enumerate(self._data_graph_line_names_bottom):
                     self.fig_bottom.linename[i] = name.encode('utf8')
                 self.fig_bottom.flg_legend = True
-            elif fig_idx == 1:
+            if fig_idx == 1:
                 for i, name in enumerate(self._data_graph_line_names_center):
                     self.fig_center.linename[i] = name.encode('utf8')
                 self.fig_center.flg_legend = True
-            else:
+            if fig_idx != 0 and fig_idx != 1:
                 raise IndexError("fig_idx must be 0 (bottom-right) or 1 (center-right).")
         else:
             if fig_idx == 0:
                 self.fig_bottom.flg_legend = False
-            elif fig_idx == 1:
+            if fig_idx == 1:
                 self.fig_center.flg_legend = False
-            else:
+            if fig_idx != 0 and fig_idx != 1:
                 raise IndexError("fig_idx must be 0 (bottom-right) or 1 (center-right).")
 
     def set_x_label(self, xname: str, fig_idx=0):
