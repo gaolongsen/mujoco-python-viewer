@@ -137,3 +137,8 @@ while viewer.is_alive:
 
 ```
 
+Here is an example from one of our research work and you can see for the wrench applied from the end-effector of UR5e and the state variables from the hinge can be shown clearly on the right-center side and right-bottom side, respectively.
+
+<img src="https://github.com/JackTony123/picx-images-hosting/raw/master/two_panels_demo.5fklkfd2wz.webp" style="zoom:45%;" />
+
+Note that in order to show the legends on your multiple data panel successfully. You must make sure `show_graph_legend` function must be behind of all of your `add_graph_line` functions.
