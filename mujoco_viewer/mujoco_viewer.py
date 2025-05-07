@@ -130,6 +130,11 @@ class MujocoViewer(Callbacks):
         self.fig_top.flg_extend = 1
         self.fig_top.flg_symmetric = 0
 
+        self.fig_cell = mujoco.MjvFigure()
+        mujoco.mjv_defaultFigure(self.fig_cell)
+        self.fig_cell.flg_extend = 1
+        self.fig_cell.flg_symmetric = 0
+
         # Maximum number of points per line
         self._num_pnts = 1000
 
@@ -143,11 +148,15 @@ class MujocoViewer(Callbacks):
         self._data_graph_line_names_top = []
         self._line_datas_top = []
 
+        self._data_graph_line_names_cell = []
+        self._line_datas_cell = []
+
         for n in range(mujoco.mjMAXLINE):
             for i in range(self._num_pnts):
                 self.fig_bottom.linedata[n][2 * i] = float(-i)
                 self.fig_center.linedata[n][2 * i] = float(-i)
                 self.fig_top.linedata[n][2 * i] = float(-i)
+                self.fig_cell.linedata[n][2 * i] = float(-i)
 
         # Create MuJoCo rendering context
         self.ctx = mujoco.MjrContext(
@@ -181,10 +190,19 @@ class MujocoViewer(Callbacks):
             height=int(height / 4),
         )
 
+        # Right-Cell Panel
+        self.graph_viewport_cell = mujoco.MjrRect(
+            left=int(3 * width / 4) + width_adjustment,
+            bottom=int(3 * height / 4),
+            width=int(width / 4),
+            height=int(height / 4),
+        )
+
         # Enable autorange for both figures
         self.axis_autorange(fig_idx=0)
         self.axis_autorange(fig_idx=1)
         self.axis_autorange(fig_idx=2)
+        self.axis_autorange(fig_idx=3)
 
         # Load camera configuration (if available)
         pathlib.Path(self.CONFIG_PATH.parent).mkdir(
@@ -228,7 +246,7 @@ class MujocoViewer(Callbacks):
         :param x_div: Number of divisions along the x-axis.
         :param y_div: Number of divisions along the y-axis.
         :param x_axis_time: Total time span represented on the x-axis.
-        :param fig_idx: Index of the figure (0 for bottom-right, 1 for center-right).
+        :param fig_idx: Index of the figure (0 for bottom-right, 1 for center-right, 2 for top-right, 3 for cell-right).
         :param override: If True, override the x_axis_time restrictions.
         """
         if not override:
@@ -242,8 +260,10 @@ class MujocoViewer(Callbacks):
             fig = self.fig_center
         elif fig_idx == 2:
             fig = self.fig_top
+        elif fig_idx == 3:
+            fig = self.fig_cell
         else:
-            raise IndexError("fig_idx must be 0 (bottom-right) or 1 (center-right) or 2 (top-right).")
+            raise IndexError("fig_idx must be 0 (bottom-right) or 1 (center-right) or 2 (top-right) or 3 (cell-right).")
 
         fig.gridsize[0] = x_div + 1
         fig.gridsize[1] = y_div + 1
@@ -272,7 +292,7 @@ class MujocoViewer(Callbacks):
         """
         Enable autorange for a specified graph panel.
 
-        :param fig_idx: Index of the figure (0 for bottom-right, 1 for center-right or 2 for top-right).
+        :param fig_idx: Index of the figure (0 for bottom-right, 1 for center-right or 2 for top-right or 3 for cell-right).
         """
         if fig_idx == 0:
             fig = self.fig_bottom
@@ -280,8 +300,10 @@ class MujocoViewer(Callbacks):
             fig = self.fig_center
         elif fig_idx == 2:
             fig = self.fig_top
+        elif fig_idx == 3:
+            fig = self.fig_cell
         else:
-            raise IndexError("fig_idx must be 0 (bottom-right) or 1 (center-right) or 2 (top-right).")
+            raise IndexError("fig_idx must be 0 (bottom-right) or 1 (center-right) or 2 (top-right) or 3 (cell-right).")
 
         fig.range[0][0] = 1.0
         fig.range[0][1] = -1.0
@@ -293,7 +315,7 @@ class MujocoViewer(Callbacks):
         Set the title of a specified graph panel.
 
         :param name: Title of the graph.
-        :param fig_idx: Index of the figure (0 for bottom-right, 1 for center-right, 2 for top-right).
+        :param fig_idx: Index of the figure (0 for bottom-right, 1 for center-right, 2 for top-right, 3 for cell-right).
         """
         assert isinstance(name, str), "Graph name must be a string."
         if fig_idx == 0:
@@ -302,15 +324,17 @@ class MujocoViewer(Callbacks):
             self.fig_center.title = name
         elif fig_idx == 2:
             self.fig_top.title = name
+        elif fig_idx == 3:
+            self.fig_cell.title = name
         else:
-            raise IndexError("fig_idx must be 0 (bottom-right) or 1 (center-right) or 2 (top-right).")
+            raise IndexError("fig_idx must be 0 (bottom-right) or 1 (center-right) or 2 (top-right) or 3 (cell-right).")
 
     def show_graph_legend(self, show_legend: bool = True, fig_idx=0):
         """
         Show or hide the legend of a specified graph panel.
 
         :param show_legend: Boolean to show or hide the legend.
-        :param fig_idx: Index of the figure (0 for bottom-right, 1 for center-right, 2 for top-right).
+        :param fig_idx: Index of the figure (0 for bottom-right, 1 for center-right, 2 for top-right, 3 for cell-right).
         """
         if show_legend:
             if fig_idx == 0:
@@ -325,8 +349,12 @@ class MujocoViewer(Callbacks):
                 for i, name in enumerate(self._data_graph_line_names_top):
                     self.fig_top.linename[i] = name.encode('utf8')
                 self.fig_top.flg_legend = True
-            if fig_idx != 0 and fig_idx != 1 and fig_idx != 2:
-                raise IndexError("fig_idx must be 0 (bottom-right) or 1 (center-right) or 2 (top-right).")
+            if fig_idx == 3:
+                for i, name in enumerate(self._data_graph_line_names_cell):
+                    self.fig_cell.linename[i] = name.encode('utf8')
+                self.fig_cell.flg_legend = True
+            if fig_idx != 0 and fig_idx != 1 and fig_idx != 2 and fig_idx != 3:
+                raise IndexError("fig_idx must be 0 (bottom-right) or 1 (center-right) or 2 (top-right) or 3 (cell-right).")
         else:
             if fig_idx == 0:
                 self.fig_bottom.flg_legend = False
@@ -334,15 +362,17 @@ class MujocoViewer(Callbacks):
                 self.fig_center.flg_legend = False
             if fig_idx == 2:
                 self.fig_top.flg_legend = False
-            if fig_idx != 0 and fig_idx != 1 and fig_idx != 2:
-                raise IndexError("fig_idx must be 0 (bottom-right) or 1 (center-right) or 2 (top-right).")
+            if fig_idx == 3:
+                self.fig_cell.flg_legend = False
+            if fig_idx != 0 and fig_idx != 1 and fig_idx != 2 and fig_idx != 3:
+                raise IndexError("fig_idx must be 0 (bottom-right) or 1 (center-right) or 2 (top-right) or 3 (cell-right).")
 
     def set_x_label(self, xname: str, fig_idx=0):
         """
         Set the x-axis label of a specified graph panel.
 
         :param xname: Label for the x-axis.
-        :param fig_idx: Index of the figure (0 for bottom-right, 1 for center-right, 2 for top-right).
+        :param fig_idx: Index of the figure (0 for bottom-right, 1 for center-right, 2 for top-right, 3 for cell-right).
         """
         assert isinstance(xname, str), "xname must be a string."
         if fig_idx == 0:
@@ -351,8 +381,10 @@ class MujocoViewer(Callbacks):
             self.fig_center.xlabel = xname
         elif fig_idx == 2:
             self.fig_top.xlabel = xname
+        elif fig_idx == 3:
+            self.fig_cell.xlabel = xname
         else:
-            raise IndexError("fig_idx must be 0 (bottom-right) or 1 (center-right) or 2 (top-right).")
+            raise IndexError("fig_idx must be 0 (bottom-right) or 1 (center-right) or 2 (top-right) or 3 (cell-right).")
 
     def add_graph_line(self, line_name, line_data=0.0, fig_idx=0):
         """
@@ -360,7 +392,7 @@ class MujocoViewer(Callbacks):
 
         :param line_name: Name of the line.
         :param line_data: Initial data value for the line.
-        :param fig_idx: Index of the figure (0 for bottom-right, 1 for center-right, 2 for top-right).
+        :param fig_idx: Index of the figure (0 for bottom-right, 1 for center-right, 2 for top-right, 3 for cell-right).
         """
         assert isinstance(line_name, str), "Line name must be a string."
         if fig_idx == 0:
@@ -390,8 +422,17 @@ class MujocoViewer(Callbacks):
                 return
             self._data_graph_line_names_top.append(line_name)
             self._line_datas_top.append(line_data)
+        elif fig_idx == 3:
+            if line_name in self._data_graph_line_names_cell:
+                print(f"Line '{line_name}' already exists in cell-right graph.")
+                return
+            if len(self._data_graph_line_names_cell) >= mujoco.mjMAXLINE:
+                print("Maximum number of lines reached for cell-right graph.")
+                return
+            self._data_graph_line_names_cell.append(line_name)
+            self._line_datas_cell.append(line_data)
         else:
-            raise IndexError("fig_idx must be 0 (bottom-right) or 1 (center-right) or 2 (top-right).")
+            raise IndexError("fig_idx must be 0 (bottom-right) or 1 (center-right) or 2 (top-right) or 3 (cell-right).")
 
     def update_graph_line(self, line_name, line_data, fig_idx=0):
         """
@@ -399,7 +440,7 @@ class MujocoViewer(Callbacks):
 
         :param line_name: Name of the line to update.
         :param line_data: New data value for the line.
-        :param fig_idx: Index of the figure (0 for bottom-right, 1 for center-right, 2 for top-right).
+        :param fig_idx: Index of the figure (0 for bottom-right, 1 for center-right, 2 for top-right, 3 for cell-right).
         """
         if fig_idx == 0:
             if line_name in self._data_graph_line_names_bottom:
@@ -425,8 +466,16 @@ class MujocoViewer(Callbacks):
                 raise NameError(
                     f"Line '{line_name}' not found in top-right graph. Add it before updating."
                 )
+        elif fig_idx == 3:
+            if line_name in self._data_graph_line_names_cell:
+                idx = self._data_graph_line_names_cell.index(line_name)
+                self._line_datas_cell[idx] = line_data
+            else:
+                raise NameError(
+                    f"Line '{line_name}' not found in cell-right graph. Add it before updating."
+                )
         else:
-            raise IndexError("fig_idx must be 0 (bottom-right) or 1 (center-right) or 2 (top-right).")
+            raise IndexError("fig_idx must be 0 (bottom-right) or 1 (center-right) or 2 (top-right) or 3 (cell-right).")
 
     def sensorupdate(self):
         """
@@ -435,6 +484,7 @@ class MujocoViewer(Callbacks):
         self.sensorupdate_bottom()
         self.sensorupdate_center()
         self.sensorupdate_top()
+        self.sensorupdate_cell()
 
     def sensorupdate_bottom(self):
         """
@@ -481,11 +531,26 @@ class MujocoViewer(Callbacks):
             self.fig_top.linepnt[n] = pnt
             self.fig_top.linedata[n][1] = self._line_datas_top[n]
 
+    def sensorupdate_cell(self):
+        """
+        Update sensor data for the cell-right graph panel.
+        """
+        if self._paused:
+            return  # Do not update data when paused
+
+        pnt = int(mujoco.mju_min(self._num_pnts, self.fig_cell.linepnt[0] + 1))
+
+        for n in range(len(self._line_datas_cell)):
+            for i in range(pnt - 1, 0, -1):
+                self.fig_cell.linedata[n][2 * i + 1] = self.fig_cell.linedata[n][2 * i - 1]
+            self.fig_cell.linepnt[n] = pnt
+            self.fig_cell.linedata[n][1] = self._line_datas_cell[n]
+
     def update_graph_size(self, fig_idx=0):
         """
         Adjust the viewport size and position for a specified graph panel.
 
-        :param fig_idx: Index of the figure (0 for bottom-right, 1 for center-right, 2 for top-right).
+        :param fig_idx: Index of the figure (0 for bottom-right, 1 for center-right, 2 for top-right, 3 for cell-right).
         """
         if fig_idx == 0:
             self.update_graph_size_bottom()
@@ -493,8 +558,10 @@ class MujocoViewer(Callbacks):
             self.update_graph_size_center()
         elif fig_idx == 2:
             self.update_graph_size_top()
+        elif fig_idx == 3:
+            self.update_graph_size_cell()
         else:
-            raise IndexError("fig_idx must be 0 (bottom-right) or 1 (center-right) or 2 (top-right).")
+            raise IndexError("fig_idx must be 0 (bottom-right) or 1 (center-right) or 2 (top-right) or 3 (cell-right).")
 
     def update_graph_size_bottom(self):
         """
@@ -528,6 +595,17 @@ class MujocoViewer(Callbacks):
         self.graph_viewport_top.bottom = int(height / 2)
         self.graph_viewport_top.width = int(width / 4)
         self.graph_viewport_top.height = int(height / 4)
+
+    def update_graph_size_cell(self):
+        """
+        Adjust the viewport size and position for the cell-right graph panel.
+        """
+        width, height = glfw.get_framebuffer_size(self.window)
+        width_adjustment = width % 4
+        self.graph_viewport_cell.left = int(3 * width / 4) + width_adjustment
+        self.graph_viewport_cell.bottom = int(3 * height / 4)
+        self.graph_viewport_cell.width = int(width / 4)
+        self.graph_viewport_cell.height = int(height / 4)
 
     # --------- Marker and Overlay Methods --------- #
 
@@ -918,6 +996,17 @@ class MujocoViewer(Callbacks):
                                 self.ctx
                             )
 
+                        # Render cell-right graph
+                        self.update_graph_size_cell()
+                        if not self._paused:
+                            self.sensorupdate_cell()
+                        if self._num > 1:
+                            mujoco.mjr_figure(
+                                self.graph_viewport_cell,
+                                self.fig_cell,
+                                self.ctx
+                            )
+
                 glfw.swap_buffers(self.window)
             glfw.poll_events()
             self._time_per_render = 0.9 * self._time_per_render + \
@@ -1079,3 +1168,4 @@ class MujocoViewer(Callbacks):
         self.update_graph_size_bottom()
         self.update_graph_size_center()
         self.update_graph_size_top()
+        self.update_graph_size_cell()
