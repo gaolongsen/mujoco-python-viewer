@@ -142,3 +142,21 @@ Here is an example from one of our research work and you can see for the wrench 
 <img src="https://github.com/JackTony123/picx-images-hosting/raw/master/two_panels_demo.5fklkfd2wz.webp" style="zoom:45%;" />
 
 Note that in order to show the legends on your multiple data panel successfully. You must make sure `show_graph_legend` function must be behind of all of your `add_graph_line` functions.
+
+## Update - 05/07/2025
+
+Add additional data panel on the right-top side to show more data for more robotics system (because my current project needs at least 3 robots so each panel for each robot).
+
+![](https://github.com/JackTony123/picx-images-hosting/raw/master/update_mj_viewer.5mo0s6cxy6.webp)
+
+If you want to call the third panel, you just follow the similar operation as the right-bottom and right-center panel but set `fig_idx=2` in the `update_graph_line` function as the example below:
+
+```python
+    interface.viewer.update_graph_line(line_name="Force_X", line_data=torque_force_data3[:3][0], fig_idx=2)
+    interface.viewer.update_graph_line(line_name="Force_Y", line_data=torque_force_data3[:3][1], fig_idx=2)
+    interface.viewer.update_graph_line(line_name="Force_Z", line_data=torque_force_data3[:3][2], fig_idx=2)
+    interface.viewer.update_graph_line(line_name="Torque_X", line_data=torque_force_data3[:3][0], fig_idx=2)
+    interface.viewer.update_graph_line(line_name="Torque_Y", line_data=torque_force_data3[3:][1], fig_idx=2)
+    interface.viewer.update_graph_line(line_name="Torque_Z", line_data=torque_force_data3[3:][2], fig_idx=2)
+```
+
