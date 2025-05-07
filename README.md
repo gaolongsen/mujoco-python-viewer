@@ -145,9 +145,9 @@ Note that in order to show the legends on your multiple data panel successfully.
 
 ## Update - 05/07/2025
 
-Add additional data panel on the right-top side to show more data for more robotics system (because my current project needs at least 3 robots so each panel for each robot).
+Add additional two data panels on the right-top side (use full space on the right-hand side) to show more data for more robotics system (because my current project needs at least 3 manipulators and 1 manipulated object so I created more panels for usage).
 
-![](https://github.com/JackTony123/picx-images-hosting/raw/master/update_mj_viewer.5mo0s6cxy6.webp)
+![](https://github.com/JackTony123/picx-images-hosting/raw/master/update_mj_viewer.6t7c0wtgnw.webp)
 
 If you want to call the third panel, you just follow the similar operation as the right-bottom and right-center panel but set `fig_idx=2` in the `update_graph_line` function as the example below:
 
@@ -160,3 +160,4 @@ If you want to call the third panel, you just follow the similar operation as th
     interface.viewer.update_graph_line(line_name="Torque_Z", line_data=torque_force_data3[3:][2], fig_idx=2)
 ```
 
+if you want to add another data panel, you can set `fig_idx=3` in the  `update_graph_line` function.
