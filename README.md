@@ -161,3 +161,14 @@ If you want to call the third panel, you just follow the similar operation as th
 ```
 
 if you want to add another data panel, you can set `fig_idx=3` in the  `update_graph_line` function.
+
+## Update - 05/08/2025
+
+Our newest version package is uploaded to *[PyPI](https://pypi.org/)*! Now you can use 
+
+```xml
+pip install multi-panel-mujoco-pyviewer==1.0.4
+```
+
+to install the library to your local environment! Any update for this library will be posted in this repository and also in PyPi page. See detail through this [link](https://pypi.org/project/multi-panel-mujoco-pyviewer/) :point_left:
+
