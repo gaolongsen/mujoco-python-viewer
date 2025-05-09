@@ -80,6 +80,37 @@ img = viewer.read_pixels(camid=2)
 - `height`: set the window height, for example: `viewer = mujoco_viewer.MujocoViewer(model, data, height=300)` (defaults to full screen's height). 
 - `hide_menus`: set whether the overlay menus and graph should be hidden or not (defaults to `False`).
 
+
+
+## Update - 05/08/2025
+
+Our newest version package is uploaded to *[PyPI](https://pypi.org/)*! Now you can use 
+
+```xml
+pip install multi-panel-mujoco-pyviewer==1.0.4
+```
+
+to install the library to your local environment! Any update for this library will be posted in this repository and also in PyPi page. See detail through this [link](https://pypi.org/project/multi-panel-mujoco-pyviewer/) :point_left:
+
+## Update - 05/07/2025
+
+Add additional two data panels on the right-top side (use full space on the right-hand side) to show more data for more robotics system (because my current project needs at least 3 manipulators and 1 manipulated object so I created more panels for usage).
+
+![](https://github.com/JackTony123/picx-images-hosting/raw/master/update_mj_viewer.6t7c0wtgnw.webp)
+
+If you want to call the third panel, you just follow the similar operation as the right-bottom and right-center panel but set `fig_idx=2` in the `update_graph_line` function as the example below:
+
+```python
+    interface.viewer.update_graph_line(line_name="Force_X", line_data=torque_force_data3[:3][0], fig_idx=2)
+    interface.viewer.update_graph_line(line_name="Force_Y", line_data=torque_force_data3[:3][1], fig_idx=2)
+    interface.viewer.update_graph_line(line_name="Force_Z", line_data=torque_force_data3[:3][2], fig_idx=2)
+    interface.viewer.update_graph_line(line_name="Torque_X", line_data=torque_force_data3[:3][0], fig_idx=2)
+    interface.viewer.update_graph_line(line_name="Torque_Y", line_data=torque_force_data3[3:][1], fig_idx=2)
+    interface.viewer.update_graph_line(line_name="Torque_Z", line_data=torque_force_data3[3:][2], fig_idx=2)
+```
+
+if you want to add another data panel, you can set `fig_idx=3` in the  `update_graph_line` function.
+
 ## Update - 11/02/2024
 
 Now I update the Lib and can make sure you can create more than one data panel to show your variables update on the right-hand side of your render window. This would help your project to show different types of the variables clearly through different panels, especially different variables with different value range during the process, for example, if you want to show the wrench applied by robot arm(6 by 1 vector) and the position tracking error(3 by 1) together through the panel.
@@ -143,32 +174,7 @@ Here is an example from one of our research work and you can see for the wrench 
 
 Note that in order to show the legends on your multiple data panel successfully. You must make sure `show_graph_legend` function must be behind of all of your `add_graph_line` functions.
 
-## Update - 05/07/2025
 
-Add additional two data panels on the right-top side (use full space on the right-hand side) to show more data for more robotics system (because my current project needs at least 3 manipulators and 1 manipulated object so I created more panels for usage).
 
-![](https://github.com/JackTony123/picx-images-hosting/raw/master/update_mj_viewer.6t7c0wtgnw.webp)
 
-If you want to call the third panel, you just follow the similar operation as the right-bottom and right-center panel but set `fig_idx=2` in the `update_graph_line` function as the example below:
-
-```python
-    interface.viewer.update_graph_line(line_name="Force_X", line_data=torque_force_data3[:3][0], fig_idx=2)
-    interface.viewer.update_graph_line(line_name="Force_Y", line_data=torque_force_data3[:3][1], fig_idx=2)
-    interface.viewer.update_graph_line(line_name="Force_Z", line_data=torque_force_data3[:3][2], fig_idx=2)
-    interface.viewer.update_graph_line(line_name="Torque_X", line_data=torque_force_data3[:3][0], fig_idx=2)
-    interface.viewer.update_graph_line(line_name="Torque_Y", line_data=torque_force_data3[3:][1], fig_idx=2)
-    interface.viewer.update_graph_line(line_name="Torque_Z", line_data=torque_force_data3[3:][2], fig_idx=2)
-```
-
-if you want to add another data panel, you can set `fig_idx=3` in the  `update_graph_line` function.
-
-## Update - 05/08/2025
-
-Our newest version package is uploaded to *[PyPI](https://pypi.org/)*! Now you can use 
-
-```xml
-pip install multi-panel-mujoco-pyviewer==1.0.4
-```
-
-to install the library to your local environment! Any update for this library will be posted in this repository and also in PyPi page. See detail through this [link](https://pypi.org/project/multi-panel-mujoco-pyviewer/) :point_left:
 
