@@ -15,11 +15,11 @@ Some pointers on migration are available [here](https://mujoco.readthedocs.io/en
 
 # Install
 ```sh
-git clone https://github.com/gaolongsen/mujoco-python-viewer.git
+git clone https://github.com/gaolongsen/multi-panel_mujoco-pyviewer.git
 ```
 
 ```sh
-cd mujoco-python-viewer
+cd multi-panel_mujoco-pyviewer
 ```
 
 ```sh
